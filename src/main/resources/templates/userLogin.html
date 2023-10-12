@@ -5,7 +5,7 @@
   <script type="text/javascript" th:src="@{/static/js/login.js}"></script>
 </head>
 <body>
-<div th:replace="header :: header"></div>
+<div th:replace="fragments/header :: header"></div>
 <div layout:fragment="content">
   <form id="loginForm">
     <input name="userid" type="text" id="memberId" placeholder="아이디">
@@ -13,6 +13,6 @@
     <button type="button" id="loginButton">작성</button>
   </form>
 </div>
-<div th:replace="footer :: footer"></div>
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
