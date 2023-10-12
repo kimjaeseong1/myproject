@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/boardWrite.js"> </script>
+    <title>게시물 작성폼</title>
+</head>
+
+<style>
+    .layout{
+      width : 500px;
+      margin : 0 auto;
+      margin-top : 40px;
+    }
+
+    .layout  input {
+      width : 100%;
+      box-sizing : border-box;
+      margin-top : 10px;
+    }
+
+    .layout  textarea {
+      width : 100%;
+      margin-top : 10px;
+      min-height : 300px;
+    }
+</style>
+
+
+<body>
+
+    <div th:replace="header :: header"></div>
+        <div class="layout">
+            <form onsubmit="return main.save();">
+                <input name="title" type="text" id="title">
+                <textarea name="content" id="content"></textarea>
+                <button type="submit" id="sub-save">작성</button>
+            </form>
+        </div>
+    <div th:replace="footer :: footer"></div>
+</body>
+</html>

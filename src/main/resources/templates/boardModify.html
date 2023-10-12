@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/boardModify.js"> </script>
+    <title>Title</title>
+</head>
+<style>
+  .layout{
+    width : 500px;
+    margin : 0 auto;
+    margin-top : 40px;
+  }
+
+  .layout  input {
+    width : 100%;
+    box-sizing : border-box;
+    margin-top : 10px;
+  }
+
+  .layout  textarea {
+    width : 100%;
+    margin-top : 10px;
+    min-height : 300px;
+  }
+</style>
+<body>
+  <div class="layout">
+      <form id="modifyForm" >
+
+          <input type="hidden" name="boardId" id="boardId" readonly/>
+          <label for="title">제목:</label>
+          <input type="text" id="title" name="title">
+          <br>
+          <label for="content">내용:</label>
+          <textarea id="content" name="content"></textarea>
+          <br>
+          <button type="button" id="modifyButton">수정 완료</button>
+    </form>
+  </div>
+</body>
+</html>
