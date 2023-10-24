@@ -1,8 +1,10 @@
 package com.example.withfuture.config;
 
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -25,6 +27,8 @@ public class ThymeleafConfig {
     public SpringTemplateEngine templateEngine(){
         SpringTemplateEngine engine  = new SpringTemplateEngine();
         engine.setTemplateResolver(templateResolver());
+        engine.addDialect(new LayoutDialect());
+        engine.addDialect(new SpringSecurityDialect());
         return engine;
     }
 

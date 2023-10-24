@@ -29,12 +29,16 @@ public class Board {
     private String content;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member member;
 
-    public static Board registerBoard(BoardDTO.BoardReqDTO boardReqDTO){
+
+    public static Board registerBoard(BoardDTO.BoardReqDTO boardReqDTO, Member member){
        Board board  = new Board();
        board.title = boardReqDTO.getTitle();
        board.content = boardReqDTO.getContent();
-
+       board.member = member;
        return board;
     }
 

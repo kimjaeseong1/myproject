@@ -3,19 +3,27 @@ package com.example.withfuture.service;
 import com.example.withfuture.dto.BoardDTO;
 import com.example.withfuture.dto.Response;
 import com.example.withfuture.entity.Board;
+import com.example.withfuture.entity.Member;
 import com.example.withfuture.exception.board.BoardException;
 import com.example.withfuture.exception.board.BoardErrorCode;
+import com.example.withfuture.exception.member.ErrorCode;
+import com.example.withfuture.exception.member.MemberException;
 import com.example.withfuture.repository.BoardRepository;
 import com.example.withfuture.repository.MemberRepository;
+import com.example.withfuture.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.data.domain.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,106 +32,121 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final HttpSession session;
+    private final MessageService messageService;
 
-    private final Response response;
 
     @Transactional
     public Board registerBoard(BoardDTO.BoardReqDTO boardReqDTO){
-        try{
-            if(session.getAttribute("id") == null){
-                   throw new BoardException(BoardErrorCode.BOARD_ID_NULL);
-            }else{
-                Board board = Board.registerBoard(boardReqDTO);
 
-
-            return boardRepository.save(board);
+        String currentUsername = SecurityUtils.getCurrentUsername();
+        System.out.println("currentUsername= " +currentUsername);
+        if(currentUsername == null){
+                throw new MemberException(ErrorCode.LOGIN_USER_NULL);
+            }else {
+            Member member = memberRepository.findByMemberId(currentUsername)
+                    .orElseThrow(() -> new MemberException(ErrorCode.MEMBERID_NULL,"memberId"));
+                return boardRepository.save(boardReqDTO.toEntity(member));
             }
-        }catch(NullPointerException e){
-            e.printStackTrace();
-            throw new BoardException(BoardErrorCode.BOARD_REGISTER_FAILED);
-        }
     }
 
     @Transactional
-    public Board updateBoard( BoardDTO.updateBoardDTO updateBoardDTO){
+    public Board updateBoard(BoardDTO.updateBoardDTO updateBoardDTO) {
+        Board board = boardRepository.findByBoardId(updateBoardDTO.getBoardId())
+                .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_ID_NULL));
 
-        try{
-                    Board board = boardRepository.findByBoardId(updateBoardDTO.getBoardId())
-                            .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_UPDATE_FAILED));
+        String currentUsername = SecurityUtils.getCurrentUsername();
 
-                    board.updateBoard(updateBoardDTO.getTitle(), updateBoardDTO.getContent());
-
-                    return board;
-        }catch (BoardException e){
-            e.printStackTrace();
-            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FAILED);
+        if(currentUsername != null &&board.getMember().getMemberId().equals(currentUsername)){
+            board.updateBoard(updateBoardDTO.getTitle(), updateBoardDTO.getContent());
+            return board;
+        }else{
+            throw new BoardException(BoardErrorCode.BOARD_UPDATE_FAILED, messageService.getMessage("CUSTOM_UPDATE_ERROR"));
         }
     }
 
     @Transactional
     public Board deleteBoard(long boardId){
-        try{
+        Board board = boardRepository.findByBoardId(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_ID_NULL));
 
-            Board board =boardRepository.findByBoardId(boardId).orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_ID_NULL));
+        Set<String> userRole = SecurityUtils.getCurrentUserRoles();
+
+        if(userRole.contains("ROLE_ADMIN")){
 
             boardRepository.deleteByBoardId(board.getBoardId()).get();
             return board;
-        }catch(BoardException e){
-            e.printStackTrace();
-            throw new BoardException(BoardErrorCode.BOARD_DELETE_FAILED);
+        }else{
+            throw new BoardException(BoardErrorCode.BOARD_DELETE_FAILED, messageService.getMessage("CUSTOM_DELETE_ERROR"));
         }
     }
 
-    public Page<Board> boardInquiry(Pageable pageable){
-        try{
+//    public Page<Board> boardInquiry(Pageable pageable){
+//        return boardRepository.findAll(pageable);
+//    }
+    public Page<BoardDTO.boardListResDTO> boardInquiry(Pageable pageable){
+        Page<Board> boards =  boardRepository.findAll(pageable);
+        List<BoardDTO.boardListResDTO> boardDTO = new ArrayList<>();
 
-            //PageRequest pageRequest = PageRequest.of(page - 1, 100, Sort.by(Sort.Direction.ASC, "boardId"));
-
-//            List<BoardDTO.boardListResDTO> boardList = boardRepository.findAllBy(pageRequest)
-//                    .stream()
-//                    .map(BoardDTO.boardListResDTO::new)
-//                    .collect(Collectors.toList());
-
-//            Slice<BoardDTO.boardListResDTO> boardList = boardRepository.findAllBy(pageRequest)
-//                    .map(BoardDTO.boardListResDTO::new);
-
-
-            return boardRepository.findAll(pageable);
-        }catch(BoardException e){
-            e.printStackTrace();
-            throw new BoardException(BoardErrorCode.BOARD_LIST_FAILED);
+        for(Board board : boards){
+            BoardDTO.boardListResDTO result = BoardDTO.boardListResDTO.builder()
+                    .board(board)
+                    .build();
+            boardDTO.add(result);
         }
+        return new PageImpl<>(boardDTO,pageable,boards.getTotalElements());
+}
+
+
+
+
+//    public Page<Board> boardTitleSearch(Pageable pageable, String title) {
+//
+//        List<Board> titleList = boardRepository.findByTitleContaining(title);
+//
+//        if(titleList.isEmpty()){
+//            throw new BoardException(BoardErrorCode.BOARD_LIST_FAILED, messageService.getMessage("CUSTOM_SEARCH_ERROR"));
+//        }
+//
+//        int pageSize = pageable.getPageSize();
+//        int currentPage = pageable.getPageNumber();
+//        int startItem = currentPage * pageSize;
+//
+//        List<Board> currentPageList;
+//
+//        if (titleList.size() < startItem) {
+//            currentPageList = Collections.emptyList();
+//        } else {
+//            int toIndex = Math.min(startItem + pageSize, titleList.size());
+//            currentPageList = titleList.subList(startItem, toIndex);
+//        }
+//
+//        return new PageImpl<>(currentPageList, pageable, titleList.size());
+//    }
+
+    public Page<BoardDTO.boardListResDTO> boardTitleSearch(Pageable pageable, String title) {
+        // 게시글을 검색합니다.
+        Page<Board> boards = boardRepository.findByTitleContaining(title, pageable);
+
+        // 검색 결과가 없으면 예외를 던집니다.
+        if (boards.isEmpty()) {
+            throw new BoardException(BoardErrorCode.BOARD_LIST_FAILED, messageService.getMessage("CUSTOM_SEARCH_ERROR"));
+        }
+
+        // 검색 결과를 DTO로 매핑합니다.
+        List<BoardDTO.boardListResDTO> boardDTO = boards.getContent().stream()
+                .map(board -> BoardDTO.boardListResDTO.builder().board(board).build())
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(boardDTO, pageable, boards.getTotalElements());
     }
 
-    public Page<Board> boardTitleSearch(Pageable pageable, String title) {
-        List<Board> titleList = boardRepository.findByTitleContaining(title);
-
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-
-        List<Board> currentPageList;
-
-        if (titleList.size() < startItem) {
-            currentPageList = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, titleList.size());
-            currentPageList = titleList.subList(startItem, toIndex);
-        }
-
-        Page<Board> boardPage = new PageImpl<>(currentPageList, pageable, titleList.size());
-
-        return boardPage;
-    }
     public BoardDTO.boardDetailResDTO boardDetailInquiry(long boardId){
-        try{
-            Board board = boardRepository.findByBoardId(boardId).get();
+        Board board = boardRepository.findByBoardId(boardId).orElseThrow(
+                () -> new BoardException(BoardErrorCode.BOARD_DETAIL_LIST_FAILED));
 
-            return new BoardDTO.boardDetailResDTO(board);
-        }catch(BoardException e){
-            e.printStackTrace();
-            throw new BoardException(BoardErrorCode.BOARD_DETAIL_LIST_FAILED);
-        }
+        return new BoardDTO.boardDetailResDTO(board);
     }
+
+
+
 }

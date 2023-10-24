@@ -2,17 +2,18 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <title>로그인 페이지</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/static/js/login.js}"></script>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
-<div layout:fragment="content">
+<div layout:fragment="header"></div>
+
   <form id="loginForm">
-    <input name="userid" type="text" id="memberId" placeholder="아이디">
-    <input name="password" type="text" id="password" placeholder="비번">
-    <button type="button" id="loginButton">작성</button>
+    <input name="userid" type="text" id="memberId" th:placeholder="#{login.id}" >
+    <input name="password" type="text" id="password" th:placeholder="#{login.password}">
+    <button type="button" id="loginButton" th:text="#{login.complete}">작성</button>
   </form>
-</div>
-<div th:replace="fragments/footer :: footer"></div>
+
+<div layout:fragment="footer"></div>
 </body>
 </html>

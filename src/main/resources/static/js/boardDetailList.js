@@ -29,7 +29,10 @@ function boardDetail(boardId){
 
     })
         .fail(function (error){
-            console.error('게시물 상세 조회 오류',error);
+            if (error && error.responseJSON && error.responseJSON.errors && error.responseJSON.errors.length > 0) {
+                const errorMessage = error.responseJSON.errors[0].message;
+                alert(errorMessage);
+            }
         });
 }
 
@@ -40,8 +43,8 @@ function  deleteBoard(boardId){
         url: '/board/' + boardId,
         dataType: 'json'
     })
-        .done(function () {
-            alert('게시물이 삭제되었습니다.');
+        .done(function (response) {
+            alert(response.message);
             window.location.href = '/view/board/list';
         })
         .fail(function (error) {

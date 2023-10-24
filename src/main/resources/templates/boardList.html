@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/boardList.js"> </script>
+    <script type="text/javascript" th:src="@{/static/js/boardList.js}"></script>
     <title>게시글 리스트 페이지</title>
 </head>
 <style>
@@ -18,52 +15,77 @@
     nav{
         float: right;
     }
+
+    .language-menu {
+
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+        z-index: 1000;
+    }
+
+
 </style>
 
 <body>
-<div class="layout">
-    <div class="float-right">
-        <a  id="login" href="#"  type="button"> 로그인  </a>
-        <button id="logOut">로그아웃</button>
-    </div>
+<div layout:fragment="header"></div>
 
+<div  class="language-menu">
+    <select class="form-select" aria-label="Default select example" id="locales" >
+        <option selected th:text="#{lang.change}"></option>
+        <option value="ko" th:text="#{lang.ko}"></option>
+        <option value="en" th:text="#{lang.en}"></option>
 
-    <div class="search-form">
-        <form id="searchForm">
-            <label for="searchInput"></label>
-            <input type="text" id="searchInput" placeholder="게시글 제목 검색">
-            <button type="submit">검색</button>
-        </form>
-
-    </div>
-    <div id="searchResults">
-        <ul id="resultList">
-
-        </ul>
-    </div>
-
-
-    <table id="boardTable">
-        <thead>
-        <tr>
-            <th>글 번호</th>
-            <th>제목입니다</th>
-        </tr>
-        </thead>
-        <tbody id="boardTableBody">
-
-        </tbody>
-    </table>
-    <a id="write" href="#">글쓰기</a>
-</div>
-<div class="paging">
-    <i class="fa-solid fa-angles-left" id="first_page"><<</i>
-    <i class="fa-solid fa-angle-left" id="prev_page"><</i>
-    <div class="pages"></div>
-    <i class="fa-solid fa-angle-right" id="next_page">></i>
-    <i class="fa-solid fa-angles-right" id="last_page">>></i>
+    </select>
 </div>
 
+    <div class="layout">
+
+            <div class="float-right">
+                <a  id="login" href="#"  type="button" th:text="#{user.login}"> 로그인  </a>
+                <a id="logOut" href="#" type="button" th:text="#{user.logout}">로그아웃</a>
+
+            </div>
+
+
+
+        <div class="search-form">
+            <form id="searchForm">
+                <label for="searchInput"></label>
+                <input type="text" id="searchInput" th:placeholder="#{search.placeholder}">
+                <button type="submit" th:text="#{board.search}" >검색</button>
+            </form>
+
+        </div>
+        <div id="searchResults">
+            <ul id="resultList">
+
+            </ul>
+        </div>
+
+
+        <table id="boardTable">
+            <thead>
+            <tr>
+                <th th:text="#{board.number}">글 번호</th>
+                <th th:text="#{board.title}">제목입니다</th>
+            </tr>
+            </thead>
+            <tbody id="boardTableBody">
+
+            </tbody>
+        </table>
+        <a id="write" href="#" th:text="#{board.write}">글쓰기</a>
+    </div>
+    <div class="paging">
+        <i class="fa-solid fa-angles-left" id="first_page"><<</i>
+        <i class="fa-solid fa-angle-left" id="prev_page"><</i>
+        <div class="pages"></div>
+        <i class="fa-solid fa-angle-right" id="next_page">></i>
+        <i class="fa-solid fa-angles-right" id="last_page">>></i>
+    </div>
+<div layout:fragment="footer"></div>
 
 </body>
 </html>

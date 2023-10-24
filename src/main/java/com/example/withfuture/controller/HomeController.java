@@ -11,11 +11,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -39,16 +41,16 @@ public class HomeController {
     }
 
     @GetMapping("/view/board/list")
-    public String boardListView(Model model,@PageableDefault(sort = "boardId",direction = Sort.Direction.ASC) Pageable pageable){
-        Page<Board> board = boardService.boardInquiry(pageable);
+    public String boardListView( Model model, @PageableDefault(sort = "boardId",direction = Sort.Direction.ASC) Pageable pageable){
+        Page<BoardDTO.boardListResDTO> board = boardService.boardInquiry(pageable);
         model.addAttribute(board);
         return "boardList";
     }
 
     @GetMapping("/view/board/detail")
-    public String boardDetail(){
-        //BoardDTO.boardDetailResDTO boardDetail = boardService.boardDetailInquiry(boardId);
-       // model.addAttribute("boardDetail", boardDetail);
+    public String boardDetail(Model model, @RequestParam long boardId){
+        BoardDTO.boardDetailResDTO boardDetail = boardService.boardDetailInquiry(boardId);
+        model.addAttribute("boardDetail", boardDetail);
         return "boardDetail";
     }
 

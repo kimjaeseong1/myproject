@@ -18,10 +18,6 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
 
     Optional<Board> deleteByBoardId(long boardId);
 
+    Page<Board> findByTitleContaining(String title,Pageable pageable);
 
-
-    List<Board> findByTitleContaining(String title);
-    Slice<Board> findAllBy(PageRequest pageRequest);
-
-    Page<Board>findAllBy(Pageable pageable);
 }

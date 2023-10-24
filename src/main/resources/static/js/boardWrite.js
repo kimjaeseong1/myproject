@@ -17,8 +17,8 @@ let main = {
             datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
-        }).done(function (){
-            alert('글이 등록 되었습니다.');
+        }).done(function (response){
+            alert(response.message);
             window.location.href='/view/board/list';
         }).fail(function (error){
             if (error && error.responseJSON && error.responseJSON.errors && error.responseJSON.errors.length > 0) {

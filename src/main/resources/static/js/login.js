@@ -20,8 +20,6 @@ $(document).ready(function () {
                 if (error && error.responseJSON && error.responseJSON.errors && error.responseJSON.errors.length > 0) {
                     const errorMessage = error.responseJSON.errors[0].message;
                     alert(errorMessage);
-                } else {
-                   alert("에러 찾을 수 없음");
                 }
             });
     });

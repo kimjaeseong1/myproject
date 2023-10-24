@@ -32,8 +32,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = ex.getErrorCode();
 
         List<ErrorResponse.ValidationError> errors = new ArrayList<>();
-        String errorMessage = messageService.getMessage(errorCode.name());
-        errors.add(new ErrorResponse.ValidationError("errorField", errorMessage));
+        String errorMessage = messageService.getMessage(errorCode.getMessage());
+        errors.add(new ErrorResponse.ValidationError(ex.getField(), errorMessage));
 
         ErrorResponse errorResponse = new ErrorResponse(errorCode.name(),errors);
 
@@ -54,11 +54,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    }
 
    @ExceptionHandler(BoardException.class)
-    public ResponseEntity<ErrorResponse> handleBoardException(BoardException ex){
+    public ResponseEntity<ErrorResponse> handleBoardException(BoardException ex
+                                                              ){
        BoardErrorCode errorCode = ex.getBoardErrorCode();
 
         List<ErrorResponse.ValidationError> errors = new ArrayList<>();
-       errors.add(new ErrorResponse.ValidationError("errorField", errorCode.getMessage()));
+//       String errorMessage = messageService.getMessage(errorCode.getMessage());
+       String customMessage = ex.getMessage();
+       String errorMessage;
+       if (customMessage != null && !customMessage.isEmpty()) {
+           errorMessage = customMessage;
+       } else {
+           errorMessage = messageService.getMessage(errorCode.getMessage());
+       }
+
+       errors.add(new ErrorResponse.ValidationError("error.getField", errorMessage));
 
     ErrorResponse errorResponse = new ErrorResponse(errorCode.name(),errors);
     return ResponseEntity.status(errorCode.getStatus()).body(errorResponse);

@@ -1,6 +1,7 @@
 package com.example.withfuture.dto;
 
 import com.example.withfuture.entity.Member;
+import com.example.withfuture.role.Role;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -25,11 +26,13 @@ public class MemberDTO {
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$", message = "{password.Pattern.message}")
         private String password;
 
+        private Role role;
         @Builder
-        public memberSignUpDTO(String memberId, String password, String memberName) {
+        public memberSignUpDTO(String memberId, String password, String memberName,Role role) {
             this.memberId = memberId;
             this.password = password;
             this.memberName = memberName;
+            this.role = role;
         }
 
     }

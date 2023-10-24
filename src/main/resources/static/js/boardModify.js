@@ -20,11 +20,11 @@ $(document).ready(function () {
 function boardData(boardId) {
     $.ajax({
         type: 'GET',
-        url : '/board/inquiry/' + boardId,
+        url : '/board/inquiry/detail/' + boardId,
         dataType: 'json'
 })
     .done(function (data){
-        $('#title').text(data.title);
+        $('#title').val(data.title);
         $('#content').text(data.content);
     });
 
@@ -32,20 +32,19 @@ function boardData(boardId) {
 
 function  updateBoard(boardId,board){
     $.ajax({
-        type: 'PUT',
+        type: 'PATCH',
         url: '/board/' + boardId,
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(board)
     })
-        .done(function () {
-            alert('게시물이 수정되었습니다.');
+        .done(function (response) {
+            alert(response.message);
             window.location.href = '/view/board/list';
         })
         .fail(function (error) {
-            const errors = error.responseJSon.errors;
-            if (errors && errors.length > 0) {
-                const errorMessage = errors[0].message;
+            if (error && error.responseJSON && error.responseJSON.errors && error.responseJSON.errors.length > 0) {
+                const errorMessage = error.responseJSON.errors[0].message;
                 alert(errorMessage);
             }
         });

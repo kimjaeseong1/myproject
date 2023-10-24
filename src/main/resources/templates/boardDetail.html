@@ -1,18 +1,18 @@
 <!DOCTYPE html >
-<html lang="en" >
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/boardDetailList.js"> </script>
+    <script type="text/javascript" th:src="@{/static/js/boardDetailList.js}"></script>
     <title>게시글 상세 페이지</title>
 </head>
 <body>
+<div layout:fragment="header"></div>
+    <h1 id="title" th:text="#{board.title}">제목입니다.</h1>
+    <p id="content" th:text="#{board.detail.content}">내용이 들어갈 부분입니다.</p>
 
-<h1 id="title">제목입니다.</h1>
-<p id="content">내용이 들어갈 부분입니다.</p>
-<button id="deleteButton">삭제</button>
-<a id="modify" href="#">수정 </a>
+        <button id="deleteButton" th:text="#{board.delete}"  sec:authorize="hasRole('ROLE_ADMIN')" >삭제</button>
+
+        <a id="modify" href="#" th:text="#{board.modify}" th:if="${boardDetail.getMemberId() == #authentication.name}" >수정 </a>
+<div layout:fragment="footer"></div>
 </body>
 </html>

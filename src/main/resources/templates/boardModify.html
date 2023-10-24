@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/boardModify.js"> </script>
+    <script type="text/javascript" th:src="@{/static/js/boardModify.js}"> </script>
     <title>Title</title>
 </head>
 <style>
@@ -28,18 +25,22 @@
   }
 </style>
 <body>
+<div layout:fragment="header"></div>
   <div class="layout">
-      <form id="modifyForm" >
+    <form id="modifyForm" >
 
           <input type="hidden" name="boardId" id="boardId" readonly/>
-          <label for="title">제목:</label>
-          <input type="text" id="title" name="title">
+          <label for="title" th:text="#{board.title}">제목:</label>
+          <input type="text" id="title" name="title"/>
           <br>
-          <label for="content">내용:</label>
+          <label for="content" th:text="#{modify.content}" >내용:</label>
           <textarea id="content" name="content"></textarea>
           <br>
-          <button type="button" id="modifyButton">수정 완료</button>
+          <button type="button" id="modifyButton" th:text="#{modify.Button}" >수정 완료</button>
     </form>
+  </div>
+<div layout:fragment="footer">
+
   </div>
 </body>
 </html>

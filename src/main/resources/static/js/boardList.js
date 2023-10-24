@@ -2,6 +2,7 @@ let currentPage;
 let totalPages ;
 let pageSize = 10;
 let currentSearchTerm = '';
+let Language = "ko";
 
 
 $(document).ready(function () {
@@ -13,24 +14,38 @@ $(document).ready(function () {
         logOut();
     })
 
+    $('#locales').change(function() {
+        const selectedLanguage = $(this).val();
+        changeLanguage(selectedLanguage);
+    });
 
-});
-
-
-function loadBoardList(page) {
     $('#searchForm').submit(function (e) {
         e.preventDefault();
         currentSearchTerm = $('#searchInput').val().trim();
         loadBoardList(0);
     });
 
+
+});
+
+
+
+function changeLanguage(lang) {
+    Language =lang;
+
+   $.get('/view/board/list',{lang:lang},function(){
+       window.location.reload();
+   });
+}
+
+
+
+function loadBoardList(page) {
     const data = {
         page: page,
         size: pageSize,
         searchTerm: currentSearchTerm
     }
-
-
     const url = currentSearchTerm
                 ? '/board/search?title=' + currentSearchTerm
                 :  '/board/inquiry/' + page ;
@@ -61,7 +76,10 @@ function loadBoardList(page) {
             updatePagination(totalPages, currentPage);
         })
         .fail(function (error) {
-            console.error('게시물 목록을 불러오는 중 오류 발생: ', error);
+            if (error && error.responseJSON && error.responseJSON.errors && error.responseJSON.errors.length > 0) {
+                const errorMessage = error.responseJSON.errors[0].message;
+                alert(errorMessage);
+            }
         });
 }
 
@@ -72,7 +90,7 @@ function attachPaginationHandlers() {
 
     $('#prev_page').click(function () {
         const currentPage = parseInt($('.pages .active').text());
-        if (currentPage > 0) {
+        if (currentPage > 0 ) {
 
             loadBoardList(currentPage -1);
         }
@@ -117,14 +135,17 @@ function updatePagination(totalPages, currentPage) {
 function logOut(){
     $.ajax({
         type:'POST',
-        url: '/logout',
+        url:'/userlogout',
     })
-        .done(function () {
-            alert('로그아웃 되었습니다.');
+        .done(function (response) {
+            alert(response.message);
             window.location.href = "/view/board/list";
         })
         .fail(function(error){
-            alert('로그인 한 유저가 없습니다. ');
+            if (error && error.responseJSON && error.responseJSON.errors && error.responseJSON.errors.length > 0) {
+                const errorMessage = error.responseJSON.errors[0].message;
+                alert(errorMessage);
+            }
             console.error('로그아웃 실패 오류',error)
         });
 }

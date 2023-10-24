@@ -13,12 +13,12 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    SIGNUP_FAILED(HttpStatus.BAD_REQUEST, "Requested Signup Failed"),
-    LOGIN_FAILED(HttpStatus.UNAUTHORIZED,"Requested login Failed"),
-    SESSION_ID_NULL(HttpStatus.NOT_FOUND,"Session Id Null"),
-    MEMBERID_NULL(HttpStatus.BAD_REQUEST,"해당 아이디가 없습니다."),
-    LOGIN_PWD_FAILED(HttpStatus.UNAUTHORIZED,"비밀번호가 일치하지 않습니다."),
-    LOGOUT_FAILED(HttpStatus.NOT_FOUND,"LogOut Failed");
+    SIGNUP_FAILED(HttpStatus.BAD_REQUEST, "SIGNUP_ERROR"),
+    LOGIN_FAILED(HttpStatus.BAD_REQUEST,"LOGIN_FAILED_ERROR"),
+    LOGIN_USER_NULL(HttpStatus.UNAUTHORIZED,"LOGIN_USER_ERROR"),
+    MEMBERID_NULL(HttpStatus.BAD_REQUEST,"MEMBERID_NULL_ERROR"),
+    LOGIN_PWD_FAILED(HttpStatus.UNAUTHORIZED,"LOGIN_PWD_ERROR"),
+    LOGOUT_FAILED(HttpStatus.NOT_FOUND,"LOGOUT_FAILED_ERROR");
 
     private final HttpStatus status;
     private final String message;
