@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,32 +94,6 @@ public class BoardService {
 }
 
 
-
-
-//    public Page<Board> boardTitleSearch(Pageable pageable, String title) {
-//
-//        List<Board> titleList = boardRepository.findByTitleContaining(title);
-//
-//        if(titleList.isEmpty()){
-//            throw new BoardException(BoardErrorCode.BOARD_LIST_FAILED, messageService.getMessage("CUSTOM_SEARCH_ERROR"));
-//        }
-//
-//        int pageSize = pageable.getPageSize();
-//        int currentPage = pageable.getPageNumber();
-//        int startItem = currentPage * pageSize;
-//
-//        List<Board> currentPageList;
-//
-//        if (titleList.size() < startItem) {
-//            currentPageList = Collections.emptyList();
-//        } else {
-//            int toIndex = Math.min(startItem + pageSize, titleList.size());
-//            currentPageList = titleList.subList(startItem, toIndex);
-//        }
-//
-//        return new PageImpl<>(currentPageList, pageable, titleList.size());
-//    }
-
     public Page<BoardDTO.boardListResDTO> boardTitleSearch(Pageable pageable, String title) {
         // 게시글을 검색합니다.
         Page<Board> boards = boardRepository.findByTitleContaining(title, pageable);
@@ -147,6 +118,15 @@ public class BoardService {
         return new BoardDTO.boardDetailResDTO(board);
     }
 
+
+    public boolean isAuthorOfBoard(Long boardId, String username){
+        Optional<Board> boardOptional = boardRepository.findByBoardId(boardId);
+        if(boardOptional.isPresent()){
+            Board board = boardOptional.get();
+            return board.getMember().getMemberId().equals(username);
+        }
+        return false;
+    }
 
 
 }

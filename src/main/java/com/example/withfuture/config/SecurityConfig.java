@@ -1,6 +1,7 @@
 package com.example.withfuture.config;
 
 import com.example.withfuture.dto.Response;
+import com.example.withfuture.handler.CustomAccessDeniedHandler;
 import com.example.withfuture.handler.CustomLogoutSuccessHandler;
 import com.example.withfuture.service.MemberService;
 import com.example.withfuture.service.MessageService;
@@ -31,6 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    CustomAccessDeniedHandler customAccessDeniedHandler;
+
 
 
     @Override
@@ -45,7 +49,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
          http
                  .authorizeRequests()
                 .antMatchers("/view/board/write","/board").authenticated()
-//                .antMatchers("/logout").authenticated()
                 .regexMatchers( HttpMethod.PATCH,"/board/\\d+").authenticated()
                 .regexMatchers(HttpMethod.DELETE,"/board/\\d+").hasAuthority("ROLE_ADMIN")
                 .anyRequest().permitAll()
@@ -56,7 +59,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessUrl("/view/board/list")
-                .permitAll();
+                .permitAll()
+                 .and()
+                 .exceptionHandling()
+                 .accessDeniedHandler(customAccessDeniedHandler);
 
 
 

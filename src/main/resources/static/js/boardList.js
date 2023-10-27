@@ -132,20 +132,29 @@ function updatePagination(totalPages, currentPage) {
 
 }
 
-function logOut(){
+function logOut() {
     $.ajax({
-        type:'POST',
-        url:'/userlogout',
+        type: 'POST',
+        url: '/userlogout',
     })
         .done(function (response) {
-            alert(response.message);
-            window.location.href = "/view/board/list";
-        })
-        .fail(function(error){
-            if (error && error.responseJSON && error.responseJSON.errors && error.responseJSON.errors.length > 0) {
-                const errorMessage = error.responseJSON.errors[0].message;
-                alert(errorMessage);
-            }
-            console.error('로그아웃 실패 오류',error)
+            console.log(response)
+            let status = response.status
+            let message = response.message
+
+            if (status === 200) {
+                // 로그아웃 성공
+                console.log(message); // 성공 메시지를 콘솔에 출력
+                alert(message); // 성공 메시지를 알림으로 표시
+                window.location.href = "/view/board/list";
+            } else if (status === 404) {
+                console.log("진입성공");
+                console.log(status);
+                // 실패
+                console.log(message); // 실패 메시지 출력
+                alert(message); // 실패 메시지를 알림으로 표시
+                }
+
         });
+
 }
