@@ -76,7 +76,7 @@
 
             </tbody>
         </table>
-        <a id="write" href="#" th:text="#{board.write}"   th:if="${#authorization.expression('isAuthenticated()')}">글쓰기</a>
+        <a id="write" href="#" th:text="#{board.write}"  th:if="${#authorization.expression('isAuthenticated()')}" >글쓰기</a>
     </div>
     <div class="paging">
         <i class="fa-solid fa-angles-left" id="first_page"><<</i>

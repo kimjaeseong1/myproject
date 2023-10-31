@@ -68,6 +68,11 @@ public class HomeController {
         return "boardModify";
     }
 
+    @GetMapping("/denied-page")
+    public String accessDenied() {
+        return "deniedPage";
+    }
+
 //    @PostMapping("/view/board/update/{boardId}")
 //    public String boardUpdate( @PathVariable long boardId , BoardDTO.updateBoardDTO updateBoardDTO,Model model){
 //      Board board =   boardService.updateBoard(boardId,updateBoardDTO);

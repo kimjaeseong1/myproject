@@ -44,11 +44,11 @@ function  deleteBoard(boardId){
         dataType: 'json'
     })
         .done(function (response) {
-            alert(response.message);
+            alert(response);
             window.location.href = '/view/board/list';
         })
         .fail(function (error) {
-            const errors = error.responseJSon.errors;
+            const errors = error.responseJSON.errors;
             if (errors && errors.length > 0) {
                 const errorMessage = errors[0].message;
                 alert(errorMessage);

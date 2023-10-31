@@ -24,10 +24,7 @@ $(document).ready(function () {
         currentSearchTerm = $('#searchInput').val().trim();
         loadBoardList(0);
     });
-
-
 });
-
 
 
 function changeLanguage(lang) {

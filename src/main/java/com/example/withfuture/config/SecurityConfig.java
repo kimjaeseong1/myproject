@@ -47,6 +47,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected  void configure(HttpSecurity http) throws Exception{
         http.csrf().disable();
          http
+                 .exceptionHandling()
+                 .accessDeniedHandler(customAccessDeniedHandler)
+                 .authenticationEntryPoint(((request, response, authException) -> {
+                     response.sendRedirect("/view/login");
+                 }))
+                 .and()
                  .authorizeRequests()
                 .antMatchers("/view/board/write","/board").authenticated()
                 .regexMatchers( HttpMethod.PATCH,"/board/\\d+").authenticated()
@@ -59,10 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessUrl("/view/board/list")
-                .permitAll()
-                 .and()
-                 .exceptionHandling()
-                 .accessDeniedHandler(customAccessDeniedHandler);
+                .permitAll();
 
 
 
